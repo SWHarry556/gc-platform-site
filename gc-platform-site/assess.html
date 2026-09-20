@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>能力测评 - 全球胜任力培养平台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif}
+body{background:#f7fafc;min-height:100vh}
+.app-container{display:flex;min-height:100vh}
+.sidebar{width:260px;background:#fff;border-right:1px solid #e2e8f0;position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-brand{padding:1.5rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid #e2e8f0}
+.sidebar-logo{width:36px;height:36px;background:linear-gradient(135deg,#1a365d,#3182ce);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff}
+.sidebar-title{font-size:0.9rem;font-weight:700;color:#1a365d}
+.sidebar-subtitle{font-size:0.6rem;color:#718096;letter-spacing:0.1em}
+.sidebar-section{padding:1rem 1.5rem 0.5rem;font-size:0.7rem;color:#a0aec0;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.sidebar-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.5rem;color:#4a5568;text-decoration:none;font-size:0.85rem;transition:all 0.2s;border-left:3px solid transparent}
+.sidebar-item:hover{background:#f7fafc;color:#1a365d}
+.sidebar-item.active{background:rgba(49,130,206,0.08);color:#1a365d;border-left-color:#3182ce;font-weight:600}
+.sidebar-icon{font-size:1.1rem;width:24px;text-align:center}
+.sidebar-divider{margin:0.5rem 1.5rem;height:1px;background:#e2e8f0}
+.sidebar-user{padding:1rem 1.5rem;display:flex;align-items:center;gap:0.75rem;border-top:1px solid #e2e8f0;margin-top:auto}
+.sidebar-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.9rem}
+.sidebar-user-name{font-size:0.85rem;font-weight:600;color:#2d3748}
+.sidebar-user-role{font-size:0.7rem;color:#a0aec0}
+.main-content{flex:1;margin-left:260px;padding:1.5rem 2rem}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.menu-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#4a5568}
+.page-title{font-size:1.5rem;font-weight:700;color:#1a365d}
+.assess-grid{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
+.assess-card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.assess-card .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.assess-card .card-header h3{font-size:1rem;font-weight:700;color:#1a365d}
+.radar-container{height:360px}
+.score-table{width:100%;border-collapse:collapse}
+.score-table th{text-align:left;padding:0.75rem;font-size:0.75rem;color:#718096;font-weight:600;border-bottom:2px solid #e2e8f0}
+.score-table td{padding:0.625rem 0.75rem;font-size:0.8rem;color:#4a5568;border-bottom:1px solid #f7fafc}
+.score-table .score-bar{height:6px;background:#e2e8f0;border-radius:3px;width:80px;display:inline-block;overflow:hidden}
+.score-table .score-fill{height:100%;border-radius:3px}
+.score-value{font-weight:700;font-size:0.85rem}
+.trend-chart{height:200px;margin-top:1rem}
+.assess-list{display:flex;flex-direction:column;gap:0.75rem}
+.assess-item{background:#fff;border-radius:10px;padding:1rem;display:flex;align-items:center;gap:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);cursor:pointer;transition:all 0.2s}
+.assess-item:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.assess-item .assess-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.assess-item .assess-info{flex:1}
+.assess-item .assess-title{font-size:0.9rem;font-weight:600;color:#2d3748}
+.assess-item .assess-desc{font-size:0.7rem;color:#718096;margin-top:0.15rem}
+.assess-item .assess-status{padding:0.25rem 0.5rem;border-radius:4px;font-size:0.65rem;font-weight:600}
+.status-done{background:#c6f6d5;color:#22543d}
+.status-pending{background:#fef5e7;color:#744210}
+.cert-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+.cert-card{background:#fff;border-radius:12px;padding:1.25rem;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s}
+.cert-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.cert-card .cert-icon{font-size:2.5rem;margin-bottom:0.75rem}
+.cert-card .cert-name{font-size:0.85rem;font-weight:600;color:#2d3748;margin-bottom:0.25rem}
+.cert-card .cert-desc{font-size:0.7rem;color:#718096;margin-bottom:0.75rem}
+.cert-card .cert-status{padding:0.25rem 0.75rem;border-radius:12px;font-size:0.7rem;font-weight:600;display:inline-block}
+.cert-earned{background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff}
+.cert-locked{background:#edf2f7;color:#a0aec0}
+@media (max-width:1024px){
+.sidebar{transform:translateX(-100%);transition:transform 0.3s}
+.sidebar.open{transform:translateX(0)}
+.main-content{margin-left:0}
+.menu-toggle{display:block}
+.assess-grid{grid-template-columns:1fr}
+.cert-grid{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+<div id="sidebar"></div>
+<div class="main-content">
+<div class="top-bar">
+<div style="display:flex;align-items:center;gap:1rem">
+<button class="menu-toggle" id="menu-toggle">☰</button>
+<div class="page-title">📋 能力测评</div>
+</div>
+</div>
+
+<div class="assess-grid">
+<div class="assess-card">
+<div class="card-header"><h3>🎯 GC能力画像</h3></div>
+<div class="radar-container" id="radarChart"></div>
+</div>
+<div class="assess-card">
+<div class="card-header"><h3>📊 详细得分</h3></div>
+<table class="score-table" id="scoreTable"></table>
+</div>
+</div>
+
+<div class="assess-card" style="margin-bottom:1.5rem">
+<div class="card-header"><h3>📈 成长趋势</h3></div>
+<div class="trend-chart" id="trendChart"></div>
+</div>
+
+<div class="assess-card" style="margin-bottom:1.5rem">
+<div class="card-header"><h3>📝 测评列表</h3></div>
+<div class="assess-list" id="assessList"></div>
+</div>
+
+<div class="assess-card">
+<div class="card-header"><h3>🏆 能力证书</h3></div>
+<div class="cert-grid" id="certGrid"></div>
+</div>
+</div>
+</div>
+
+<script src="gc-data.js"></script>
+<script>
+initPage('assess');
+const user = Auth.getCurrentUser();
+
+function initRadarChart() {
+  const chart = echarts.init(document.getElementById('radarChart'));
+  const profile = user.capabilityProfile || {};
+  const values = GC_DIMENSIONS.map(d => profile[d.id] || 50);
+  
+  const option = {
+    radar: {
+      indicator: GC_DIMENSIONS.map(d => ({ name: d.name, max: 100 })),
+      shape: 'polygon',
+      splitNumber: 5,
+      axisName: { color: '#4a5568', fontSize: 10 },
+      splitLine: { lineStyle: { color: '#e2e8f0' } },
+      splitArea: { areaStyle: { color: ['#fff', '#f7fafc', '#fff', '#f7fafc', '#fff'] } },
+      axisLine: { lineStyle: { color: '#e2e8f0' } }
+    },
+    series: [{
+      type: 'radar',
+      data: [{
+        value: values,
+        name: '当前能力',
+        areaStyle: { color: 'rgba(49,130,206,0.25)' },
+        lineStyle: { color: '#3182ce', width: 2 },
+        itemStyle: { color: '#3182ce' }
+      }]
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize', () => chart.resize());
+}
+
+function renderScoreTable() {
+  const profile = user.capabilityProfile || {};
+  let html = '<tr><th>维度</th><th>得分</th><th>可视化</th></tr>';
+  
+  GC_DIMENSIONS.forEach(d => {
+    const score = profile[d.id] || 50;
+    const color = score >= 80 ? '#48bb78' : score >= 60 ? '#ed8936' : '#e53e3e';
+    html += `<tr><td>${d.name}</td><td class="score-value" style="color:${color}">${score}</td><td><div class="score-bar"><div class="score-fill" style="width:${score}%;background:${color}"></div></div></td></tr>`;
+  });
+  
+  document.getElementById('scoreTable').innerHTML = html;
+}
+
+function initTrendChart() {
+  const chart = echarts.init(document.getElementById('trendChart'));
+  const option = {
+    grid: { left: 40, right: 20, top: 20, bottom: 30 },
+    xAxis: { type: 'category', data: ['入学', '第2周', '第4周', '第6周', '当前'], axisLine: { lineStyle: { color: '#e2e8f0' } }, axisLabel: { color: '#718096', fontSize: 10 } },
+    yAxis: { type: 'value', min: 30, max: 100, axisLine: { show: false }, splitLine: { lineStyle: { color: '#f7fafc' } }, axisLabel: { color: '#718096', fontSize: 10 } },
+    series: [{
+      type: 'line',
+      data: [50, 52, (user.gcIndex || 50) - 5, (user.gcIndex || 50) - 2, user.gcIndex || 50],
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 8,
+      lineStyle: { color: '#3182ce', width: 2 },
+      itemStyle: { color: '#3182ce' },
+      areaStyle: { color: 'rgba(49,130,206,0.1)' }
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize', () => chart.resize());
+}
+
+function renderAssessList() {
+  const items = [
+    { icon: '🎯', title: '入学基线测评', desc: '16题 · 4大维度 · 初始能力画像', status: user.baselineCompleted ? '已完成' : '待完成', done: user.baselineCompleted, action: user.baselineCompleted ? '#' : 'baseline.html' },
+    { icon: '📚', title: '模块一综合测评', desc: '全球议题认知 · 20题', status: '未解锁', done: false, action: '#' },
+    { icon: '🌍', title: '模块二综合测评', desc: '跨文化理解 · 20题', status: '未解锁', done: false, action: '#' },
+    { icon: '🗣️', title: '模块三综合测评', desc: '跨文化沟通 · 20题', status: '未解锁', done: false, action: '#' },
+    { icon: '✊', title: '模块四综合测评', desc: '全球公民行动 · 20题', status: '未解锁', done: false, action: '#' },
+  ];
+  
+  let html = '';
+  items.forEach(item => {
+    const bg = item.done ? 'linear-gradient(135deg,#48bb78,#38a169)' : 'linear-gradient(135deg,#ed8936,#dd6b20)';
+    const statusClass = item.done ? 'status-done' : 'status-pending';
+    html += `
+      <div class="assess-item" onclick="window.location.href='${item.action}'">
+        <div class="assess-icon" style="background:${bg};color:#fff">${item.icon}</div>
+        <div class="assess-info">
+          <div class="assess-title">${item.title}</div>
+          <div class="assess-desc">${item.desc}</div>
+        </div>
+        <div class="assess-status ${statusClass}">${item.status}</div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('assessList').innerHTML = html;
+}
+
+function renderCertificates() {
+  const earned = user.certificates || [];
+  let html = '';
+  
+  CERTIFICATES.forEach(cert => {
+    const isEarned = earned.includes(cert.id);
+    const statusClass = isEarned ? 'cert-earned' : 'cert-locked';
+    const statusText = isEarned ? '已获得' : '未解锁';
+    html += `
+      <div class="cert-card">
+        <div class="cert-icon">${cert.icon}</div>
+        <div class="cert-name">${cert.name}</div>
+        <div class="cert-desc">${cert.description}</div>
+        <div class="cert-status ${statusClass}">${statusText}</div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('certGrid').innerHTML = html;
+}
+
+initRadarChart();
+renderScoreTable();
+initTrendChart();
+renderAssessList();
+renderCertificates();
+</script>
+</body>
+</html>

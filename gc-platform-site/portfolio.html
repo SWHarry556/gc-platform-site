@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>成长档案 - 全球胜任力培养平台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif}
+body{background:#f7fafc;min-height:100vh}
+.app-container{display:flex;min-height:100vh}
+.sidebar{width:260px;background:#fff;border-right:1px solid #e2e8f0;position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-brand{padding:1.5rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid #e2e8f0}
+.sidebar-logo{width:36px;height:36px;background:linear-gradient(135deg,#1a365d,#3182ce);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff}
+.sidebar-title{font-size:0.9rem;font-weight:700;color:#1a365d}
+.sidebar-subtitle{font-size:0.6rem;color:#718096;letter-spacing:0.1em}
+.sidebar-section{padding:1rem 1.5rem 0.5rem;font-size:0.7rem;color:#a0aec0;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.sidebar-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.5rem;color:#4a5568;text-decoration:none;font-size:0.85rem;transition:all 0.2s;border-left:3px solid transparent}
+.sidebar-item:hover{background:#f7fafc;color:#1a365d}
+.sidebar-item.active{background:rgba(49,130,206,0.08);color:#1a365d;border-left-color:#3182ce;font-weight:600}
+.sidebar-icon{font-size:1.1rem;width:24px;text-align:center}
+.sidebar-divider{margin:0.5rem 1.5rem;height:1px;background:#e2e8f0}
+.sidebar-user{padding:1rem 1.5rem;display:flex;align-items:center;gap:0.75rem;border-top:1px solid #e2e8f0;margin-top:auto}
+.sidebar-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.9rem}
+.sidebar-user-name{font-size:0.85rem;font-weight:600;color:#2d3748}
+.sidebar-user-role{font-size:0.7rem;color:#a0aec0}
+.main-content{flex:1;margin-left:260px;padding:1.5rem 2rem}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.menu-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#4a5568}
+.page-title{font-size:1.5rem;font-weight:700;color:#1a365d}
+.section-title{font-size:1.1rem;font-weight:700;color:#1a365d;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+.profile-card{background:#fff;border-radius:12px;padding:2rem;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:1.5rem;display:flex;gap:2rem;align-items:flex-start}
+.profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;flex-shrink:0}
+.profile-info{flex:1}
+.profile-name{font-size:1.5rem;font-weight:700;color:#1a365d;margin-bottom:0.25rem}
+.profile-meta{display:flex;gap:1rem;font-size:0.8rem;color:#718096;margin-bottom:0.75rem}
+.profile-badges{display:flex;gap:0.5rem;margin-bottom:0.75rem}
+.profile-badge{padding:0.25rem 0.75rem;background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;border-radius:12px;font-size:0.7rem;font-weight:600}
+.profile-desc{font-size:0.85rem;color:#4a5568;line-height:1.5}
+.profile-radar{width:240px;height:200px;flex-shrink:0}
+.timeline-card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:1.5rem}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0.5rem;top:0;bottom:0;width:2px;background:linear-gradient(180deg,#3182ce,#1a365d)}
+.timeline-item{position:relative;padding-bottom:1.5rem}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-1.75rem;top:0.25rem;width:12px;height:12px;border-radius:50%;background:#fff;border:3px solid #3182ce}
+.timeline-date{font-size:0.7rem;color:#a0aec0;font-weight:600;margin-bottom:0.25rem}
+.timeline-title{font-size:0.9rem;font-weight:700;color:#2d3748;margin-bottom:0.25rem}
+.timeline-desc{font-size:0.8rem;color:#718096}
+.cert-grid-portfolio{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+.cert-card-portfolio{background:#fff;border-radius:12px;padding:1.25rem;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.cert-card-portfolio .cert-icon-portfolio{font-size:2.5rem;margin-bottom:0.75rem}
+.cert-card-portfolio .cert-name-portfolio{font-size:0.85rem;font-weight:600;color:#2d3748;margin-bottom:0.25rem}
+.cert-card-portfolio .cert-desc-portfolio{font-size:0.7rem;color:#718096}
+.export-card{background:#fff;border-radius:12px;padding:1.5rem;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.export-options{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.export-option{padding:1.5rem;border:2px solid #e2e8f0;border-radius:10px;text-align:center;cursor:pointer;transition:all 0.2s}
+.export-option:hover{border-color:#3182ce;background:rgba(49,130,206,0.05)}
+.export-option .export-icon{font-size:2rem;margin-bottom:0.75rem}
+.export-option .export-title{font-size:0.9rem;font-weight:700;color:#2d3748;margin-bottom:0.25rem}
+.export-option .export-desc{font-size:0.75rem;color:#718096}
+@media (max-width:1024px){
+.sidebar{transform:translateX(-100%);transition:transform 0.3s}
+.sidebar.open{transform:translateX(0)}
+.main-content{margin-left:0}
+.menu-toggle{display:block}
+.profile-card{flex-direction:column}
+.profile-radar{width:100%;height:200px}
+.cert-grid-portfolio{grid-template-columns:repeat(2,1fr)}
+.export-options{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+<div id="sidebar"></div>
+<div class="main-content">
+<div class="top-bar">
+<div style="display:flex;align-items:center;gap:1rem">
+<button class="menu-toggle" id="menu-toggle">☰</button>
+<div class="page-title">📁 成长档案</div>
+</div>
+</div>
+
+<div class="profile-card">
+<div class="profile-avatar" id="profileAvatar"></div>
+<div class="profile-info">
+<div class="profile-name" id="profileName"></div>
+<div class="profile-meta" id="profileMeta"></div>
+<div class="profile-badges" id="profileBadges"></div>
+<div class="profile-desc" id="profileDesc"></div>
+</div>
+<div class="profile-radar" id="profileRadar"></div>
+</div>
+
+<div class="timeline-card">
+<div class="section-title">📅 成长时间线</div>
+<div class="timeline" id="timeline"></div>
+</div>
+
+<div class="section-title">🏆 能力证书</div>
+<div class="cert-grid-portfolio" id="certGridPortfolio"></div>
+
+<div class="export-card">
+<div class="section-title">📤 一键导出</div>
+<div class="export-options">
+<div class="export-option" onclick="exportPDF()">
+<div class="export-icon">📄</div>
+<div class="export-title">导出PDF简历</div>
+<div class="export-desc">生成标准格式个人简介与能力证明</div>
+</div>
+<div class="export-option" onclick="exportQR()">
+<div class="export-icon">📱</div>
+<div class="export-title">数字名片二维码</div>
+<div class="export-desc">生成可分享的个人能力二维码</div>
+</div>
+<div class="export-option" onclick="exportEnglish()">
+<div class="export-icon">🌐</div>
+<div class="export-title">英文版档案</div>
+<div class="export-desc">生成英文版GC能力档案</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="gc-data.js"></script>
+<script>
+initPage('portfolio');
+const user = Auth.getCurrentUser();
+
+function renderProfile() {
+  document.getElementById('profileAvatar').textContent = (user.profile?.fullName || user.username).charAt(0);
+  document.getElementById('profileName').textContent = user.profile?.fullName || user.username;
+  
+  const meta = [];
+  if (user.profile?.school) meta.push(`🏫 ${user.profile.school}`);
+  if (user.profile?.major) meta.push(`📚 ${user.profile.major}`);
+  if (user.profile?.company) meta.push(`🏢 ${user.profile.company}`);
+  if (user.profile?.title) meta.push(`💼 ${user.profile.title}`);
+  meta.push(`📊 GC指数 ${user.gcIndex || 50}`);
+  document.getElementById('profileMeta').innerHTML = meta.join(' <span style="color:#e2e8f0">|</span> ');
+  
+  const badges = [];
+  if (user.baselineCompleted) badges.push('基线测评完成');
+  if ((user.studyStats?.completedCourses || 0) > 0) badges.push(`已学${user.studyStats.completedCourses}门课程`);
+  if ((user.certificates?.length || 0) > 0) badges.push(`${user.certificates.length}个证书`);
+  document.getElementById('profileBadges').innerHTML = badges.map(b => `<span class="profile-badge">${b}</span>`).join('');
+  
+  const desc = `全球胜任力培养平台学员，专注于${user.profile?.major || '专业学习'}。已系统学习全球议题认知、跨文化理解、跨文化沟通和全球公民行动四大维度能力，积极参与企业实践项目。`;
+  document.getElementById('profileDesc').textContent = desc;
+}
+
+function initProfileRadar() {
+  const chart = echarts.init(document.getElementById('profileRadar'));
+  const profile = user.capabilityProfile || {};
+  const values = [
+    Math.round((profile.g1 + profile.g2 + profile.g3) / 3) || 50,
+    Math.round((profile.g4 + profile.g5 + profile.g6) / 3) || 50,
+    Math.round((profile.g7 + profile.g8 + profile.g9) / 3) || 50,
+    Math.round((profile.g10 + profile.g11 + profile.g12) / 3) || 50,
+    Math.round((profile.g13 + profile.g14 + profile.g15 + profile.g16) / 4) || 50
+  ];
+  
+  const option = {
+    radar: {
+      indicator: [
+        { name: '全球议题认知', max: 100 },
+        { name: '跨文化理解', max: 100 },
+        { name: '跨文化沟通', max: 100 },
+        { name: '全球公民行动', max: 100 },
+        { name: '职业胜任力', max: 100 }
+      ],
+      radius: '65%',
+      axisName: { color: '#4a5568', fontSize: 9 },
+      splitLine: { lineStyle: { color: '#e2e8f0' } },
+      splitArea: { areaStyle: { color: ['#fff', '#f7fafc'] } },
+      axisLine: { lineStyle: { color: '#e2e8f0' } }
+    },
+    series: [{
+      type: 'radar',
+      data: [{
+        value: values,
+        name: '能力画像',
+        areaStyle: { color: 'rgba(49,130,206,0.3)' },
+        lineStyle: { color: '#3182ce', width: 2 },
+        itemStyle: { color: '#3182ce' }
+      }]
+    }]
+  };
+  chart.setOption(option);
+  window.addEventListener('resize', () => chart.resize());
+}
+
+function renderTimeline() {
+  const events = [
+    { date: new Date(user.createdAt).toLocaleDateString('zh-CN'), title: '加入全球胜任力培养平台', desc: '开启GC培养之旅' },
+    { date: '2026-09-15', title: '完成入学基线测评', desc: `初始GC指数：${user.gcIndex || 50}分` },
+    { date: '2026-09-10', title: '开始学习模块一', desc: '全球议题认知 · 气候变化与能源转型' },
+    { date: '2026-09-05', title: '注册账号', desc: '创建学生账号，选择机械设计制造及其自动化专业' }
+  ];
+  
+  let html = '';
+  events.forEach(e => {
+    html += `
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">${e.date}</div>
+        <div class="timeline-title">${e.title}</div>
+        <div class="timeline-desc">${e.desc}</div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('timeline').innerHTML = html;
+}
+
+function renderCertificates() {
+  const earned = user.certificates || [];
+  let html = '';
+  
+  CERTIFICATES.forEach(cert => {
+    const isEarned = earned.includes(cert.id);
+    const opacity = isEarned ? '1' : '0.4';
+    html += `
+      <div class="cert-card-portfolio" style="opacity:${opacity}">
+        <div class="cert-icon-portfolio">${cert.icon}</div>
+        <div class="cert-name-portfolio">${cert.name}</div>
+        <div class="cert-desc-portfolio">${isEarned ? '已获得' : cert.description}</div>
+      </div>
+    `;
+  });
+  
+  document.getElementById('certGridPortfolio').innerHTML = html;
+}
+
+function exportPDF() {
+  const content = `
+    全球胜任力档案
+    
+    姓名：${user.profile?.fullName || user.username}
+    学校：${user.profile?.school || '未填写'}
+    专业：${user.profile?.major || '未填写'}
+    
+    GC指数：${user.gcIndex || 50}/100
+    
+    四大维度能力：
+    - 全球议题认知：${Math.round(((user.capabilityProfile?.g1 || 50) + (user.capabilityProfile?.g2 || 50) + (user.capabilityProfile?.g3 || 50)) / 3)}
+    - 跨文化理解：${Math.round(((user.capabilityProfile?.g4 || 50) + (user.capabilityProfile?.g5 || 50) + (user.capabilityProfile?.g6 || 50)) / 3)}
+    - 跨文化沟通：${Math.round(((user.capabilityProfile?.g7 || 50) + (user.capabilityProfile?.g8 || 50) + (user.capabilityProfile?.g9 || 50)) / 3)}
+    - 全球公民行动：${Math.round(((user.capabilityProfile?.g10 || 50) + (user.capabilityProfile?.g11 || 50) + (user.capabilityProfile?.g12 || 50)) / 3)}
+    
+    基于OECD全球胜任力框架生成
+    全球胜任力培养平台 © 2026
+  `;
+  
+  const blob = new Blob([content], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `GC档案_${user.profile?.fullName || user.username}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('档案已导出！（实际PDF生成需借助PDF库，当前导出为文本格式）');
+}
+
+function exportQR() {
+  alert('数字名片功能开发中：将生成包含个人GC能力画像的二维码');
+}
+
+function exportEnglish() {
+  alert('英文版档案导出功能开发中');
+}
+
+renderProfile();
+initProfileRadar();
+renderTimeline();
+renderCertificates();
+</script>
+</body>
+</html>
