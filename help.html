@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帮助中心 - 全球胜任力培养平台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif}
+body{background:#f7fafc;min-height:100vh}
+.app-container{display:flex;min-height:100vh}
+.sidebar{width:260px;background:#fff;border-right:1px solid #e2e8f0;position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-brand{padding:1.5rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid #e2e8f0}
+.sidebar-logo{width:36px;height:36px;background:linear-gradient(135deg,#1a365d,#3182ce);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff}
+.sidebar-title{font-size:0.9rem;font-weight:700;color:#1a365d}
+.sidebar-subtitle{font-size:0.6rem;color:#718096;letter-spacing:0.1em}
+.sidebar-section{padding:1rem 1.5rem 0.5rem;font-size:0.7rem;color:#a0aec0;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.sidebar-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.5rem;color:#4a5568;text-decoration:none;font-size:0.85rem;transition:all 0.2s;border-left:3px solid transparent}
+.sidebar-item:hover{background:#f7fafc;color:#1a365d}
+.sidebar-item.active{background:rgba(49,130,206,0.08);color:#1a365d;border-left-color:#3182ce;font-weight:600}
+.sidebar-icon{font-size:1.1rem;width:24px;text-align:center}
+.sidebar-divider{margin:0.5rem 1.5rem;height:1px;background:#e2e8f0}
+.sidebar-user{padding:1rem 1.5rem;display:flex;align-items:center;gap:0.75rem;border-top:1px solid #e2e8f0;margin-top:auto}
+.sidebar-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.9rem}
+.sidebar-user-name{font-size:0.85rem;font-weight:600;color:#2d3748}
+.sidebar-user-role{font-size:0.7rem;color:#a0aec0}
+.main-content{flex:1;margin-left:260px;padding:1.5rem 2rem;max-width:1000px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.menu-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#4a5568}
+.page-title{font-size:1.5rem;font-weight:700;color:#1a365d}
+.help-card{background:#fff;border-radius:12px;padding:1.5rem 2rem;box-shadow:0 1px 3px rgba(0,0,0,0.08);margin-bottom:1.5rem}
+.help-card h3{font-size:1.1rem;font-weight:700;color:#1a365d;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;padding-bottom:0.75rem;border-bottom:1px solid #f7fafc}
+.faq-item{padding:1rem 0;border-bottom:1px solid #f7fafc}
+.faq-item:last-child{border-bottom:none}
+.faq-question{font-size:0.9rem;font-weight:600;color:#2d3748;margin-bottom:0.5rem;cursor:pointer;display:flex;align-items:center;gap:0.5rem}
+.faq-question::before{content:'Q';display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#3182ce;color:#fff;border-radius:6px;font-size:0.75rem;font-weight:700;flex-shrink:0}
+.faq-answer{font-size:0.85rem;color:#4a5568;line-height:1.6;padding-left:2rem;display:none}
+.faq-item.open .faq-answer{display:block;padding-top:0.5rem}
+.faq-item.open .faq-question{color:#3182ce}
+.guide-step{display:flex;gap:1rem;padding:1rem 0;border-bottom:1px solid #f7fafc}
+.guide-step:last-child{border-bottom:none}
+.guide-step .step-num{width:32px;height:32px;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;flex-shrink:0}
+.guide-step .step-content .step-title{font-size:0.9rem;font-weight:600;color:#2d3748;margin-bottom:0.25rem}
+.guide-step .step-content .step-desc{font-size:0.8rem;color:#718096;line-height:1.5}
+.contact-card{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.contact-item{text-align:center;padding:1.5rem 1rem;background:#f7fafc;border-radius:10px}
+.contact-item .contact-icon{font-size:2rem;margin-bottom:0.5rem}
+.contact-item .contact-title{font-size:0.85rem;font-weight:600;color:#2d3748;margin-bottom:0.25rem}
+.contact-item .contact-desc{font-size:0.75rem;color:#718096}
+@media (max-width:1024px){
+.sidebar{transform:translateX(-100%);transition:transform 0.3s}
+.sidebar.open{transform:translateX(0)}
+.main-content{margin-left:0}
+.menu-toggle{display:block}
+.contact-card{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+<div id="sidebar"></div>
+<div class="main-content">
+<div class="top-bar">
+<div style="display:flex;align-items:center;gap:1rem">
+<button class="menu-toggle" id="menu-toggle">☰</button>
+<div class="page-title">❓ 帮助中心</div>
+</div>
+</div>
+
+<div class="help-card">
+<h3>🚀 快速上手指南</h3>
+<div class="guide-step">
+<div class="step-num">1</div>
+<div class="step-content">
+<div class="step-title">注册并登录账号</div>
+<div class="step-desc">在登录页选择"学生"或"导师"角色，填写用户名和密码完成注册。首次登录后进入个人仪表盘。</div>
+</div>
+</div>
+<div class="guide-step">
+<div class="step-num">2</div>
+<div class="step-content">
+<div class="step-title">完成入学基线测评</div>
+<div class="step-desc">进入"能力测评"页面，完成16道基线测评题。系统将生成你的初始能力画像（雷达图）和GC指数。</div>
+</div>
+</div>
+<div class="guide-step">
+<div class="step-num">3</div>
+<div class="step-content">
+<div class="step-title">开始系统学习</div>
+<div class="step-desc">进入"学习中心"，从5大模块中选择感兴趣的主题开始学习。每个主题包含三个难度等级（基础→进阶→高级）。</div>
+</div>
+</div>
+<div class="guide-step">
+<div class="step-num">4</div>
+<div class="step-content">
+<div class="step-title">参与实践项目</div>
+<div class="step-desc">进入"实践中心"报名工作坊或参加社会创新挑战赛，将所学知识应用到实际场景中。</div>
+</div>
+</div>
+<div class="guide-step">
+<div class="step-num">5</div>
+<div class="step-content">
+<div class="step-title">对接企业机会</div>
+<div class="step-desc">进入"企业对接"页面，浏览企业项目库、预约导师辅导、查看匹配的国际岗位推荐。</div>
+</div>
+</div>
+<div class="guide-step">
+<div class="step-num">6</div>
+<div class="step-content">
+<div class="step-title">导出成长档案</div>
+<div class="step-desc">在"成长档案"页面一键导出你的GC能力画像、学习记录和证书，用于升学或求职展示。</div>
+</div>
+</div>
+</div>
+
+<div class="help-card">
+<h3>💬 常见问题</h3>
+<div class="faq-item">
+<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">什么是全球胜任力（GC）？</div>
+<div class="faq-answer">全球胜任力（Global Competence）是OECD提出的四维能力框架，包括：全球议题认知、跨文化理解、跨文化沟通、全球公民行动。本平台基于此框架设计完整培养体系，帮助学生系统提升国际化视野和能力。</div>
+</div>
+<div class="faq-item">
+<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">什么是GC指数？</div>
+<div class="faq-answer">GC指数是0-100的综合评分，基于你的16项能力维度得分加权计算。完成基线测评后获得初始值，随学习和实践持续提升。GC指数60+为合格，80+为优秀，90+为卓越。</div>
+</div>
+<div class="faq-item">
+<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">如何获得能力证书？</div>
+<div class="faq-answer">平台提供4类证书：基线测评完成证书、模块学习完成证书、实践项目完成证书和年度GC能力认证。完成对应任务后自动获得证书，可在成长档案页面查看和导出。</div>
+</div>
+<div class="faq-item">
+<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">学习进度如何保存？</div>
+<div class="faq-answer">你的学习进度、能力画像、证书等数据存储在浏览器本地（LocalStorage），无需联网。但清除浏览器数据会导致进度丢失，建议定期导出档案备份。</div>
+</div>
+<div class="faq-item">
+<div class="faq-question" onclick="this.parentElement.classList.toggle('open')">导师账号和学生账号有什么区别？</div>
+<div class="faq-answer">学生账号可使用所有学习、测评、实践功能；导师账号额外拥有学生管理、项目发布、辅导预约确认等权限。两类账号共享相同的能力框架。</div>
+</div>
+</div>
+
+<div class="help-card">
+<h3>📞 联系我们</h3>
+<div class="contact-card">
+<div class="contact-item">
+<div class="contact-icon">📧</div>
+<div class="contact-title">邮箱</div>
+<div class="contact-desc">gc-platform@example.edu</div>
+</div>
+<div class="contact-item">
+<div class="contact-icon">💬</div>
+<div class="contact-title">在线客服</div>
+<div class="contact-desc">工作日 9:00-18:00</div>
+</div>
+<div class="contact-item">
+<div class="contact-icon">📖</div>
+<div class="contact-title">使用手册</div>
+<div class="contact-desc">PDF下载</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="gc-data.js"></script>
+<script>
+initPage('help');
+</script>
+</body>
+</html>

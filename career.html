@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>企业对接 - 全球胜任力培养平台</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif}
+body{background:#f7fafc;min-height:100vh}
+.app-container{display:flex;min-height:100vh}
+.sidebar{width:260px;background:#fff;border-right:1px solid #e2e8f0;position:fixed;height:100vh;overflow-y:auto;z-index:100}
+.sidebar-brand{padding:1.5rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid #e2e8f0}
+.sidebar-logo{width:36px;height:36px;background:linear-gradient(135deg,#1a365d,#3182ce);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;color:#fff}
+.sidebar-title{font-size:0.9rem;font-weight:700;color:#1a365d}
+.sidebar-subtitle{font-size:0.6rem;color:#718096;letter-spacing:0.1em}
+.sidebar-section{padding:1rem 1.5rem 0.5rem;font-size:0.7rem;color:#a0aec0;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.sidebar-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1.5rem;color:#4a5568;text-decoration:none;font-size:0.85rem;transition:all 0.2s;border-left:3px solid transparent}
+.sidebar-item:hover{background:#f7fafc;color:#1a365d}
+.sidebar-item.active{background:rgba(49,130,206,0.08);color:#1a365d;border-left-color:#3182ce;font-weight:600}
+.sidebar-icon{font-size:1.1rem;width:24px;text-align:center}
+.sidebar-divider{margin:0.5rem 1.5rem;height:1px;background:#e2e8f0}
+.sidebar-user{padding:1rem 1.5rem;display:flex;align-items:center;gap:0.75rem;border-top:1px solid #e2e8f0;margin-top:auto}
+.sidebar-user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:0.9rem}
+.sidebar-user-name{font-size:0.85rem;font-weight:600;color:#2d3748}
+.sidebar-user-role{font-size:0.7rem;color:#a0aec0}
+.main-content{flex:1;margin-left:260px;padding:1.5rem 2rem}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.menu-toggle{display:none;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#4a5568}
+.page-title{font-size:1.5rem;font-weight:700;color:#1a365d}
+.section-title{font-size:1.1rem;font-weight:700;color:#1a365d;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem}
+.project-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:2rem}
+.project-card{background:#fff;border-radius:12px;padding:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,0.08);transition:all 0.2s;cursor:pointer}
+.project-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.project-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem}
+.project-company{font-size:0.75rem;color:#3182ce;font-weight:600;background:rgba(49,130,206,0.1);padding:0.25rem 0.5rem;border-radius:4px}
+.project-status{font-size:0.65rem;padding:0.2rem 0.5rem;border-radius:4px;font-weight:600}
+.status-open{background:#c6f6d5;color:#22543d}
+.status-closing{background:#fef5e7;color:#744210}
+.project-title{font-size:1rem;font-weight:700;color:#2d3748;margin-bottom:0.5rem}
+.project-desc{font-size:0.8rem;color:#718096;margin-bottom:0.75rem;line-height:1.4}
+.project-meta{display:flex;gap:1.5rem;font-size:0.7rem;color:#a0aec0;margin-bottom:0.75rem}
+.project-tags{display:flex;gap:0.5rem}
+.project-tag{padding:0.2rem 0.5rem;background:#edf2f7;border-radius:4px;font-size:0.65rem;color:#4a5568}
+.project-footer{display:flex;justify-content:space-between;align-items:center;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #f7fafc}
+.project-deadline{font-size:0.75rem;color:#a0aec0}
+.mentor-list{display:flex;flex-direction:column;gap:1rem;margin-bottom:2rem}
+.mentor-card{background:#fff;border-radius:12px;padding:1.25rem;box-shadow:0 1px 3px rgba(0,0,0,0.08);display:flex;align-items:center;gap:1.25rem;transition:all 0.2s;cursor:pointer}
+.mentor-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.mentor-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#1a365d,#3182ce);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:600;flex-shrink:0}
+.mentor-info{flex:1}
+.mentor-name{font-size:1rem;font-weight:700;color:#2d3748}
+.mentor-title{font-size:0.8rem;color:#718096;margin-bottom:0.25rem}
+.mentor-company{font-size:0.75rem;color:#3182ce;font-weight:600}
+.mentor-tags{display:flex;gap:0.4rem;margin-top:0.5rem}
+.mentor-tag{padding:0.15rem 0.4rem;background:#ebf8ff;border-radius:4px;font-size:0.65rem;color:#3182ce}
+.mentor-available{font-size:0.7rem;color:#48bb78;margin-top:0.25rem}
+.mentor-action{display:flex;flex-direction:column;gap:0.5rem;align-items:flex-end}
+.job-list{display:flex;flex-direction:column;gap:0.75rem}
+.job-card{background:#fff;border-radius:10px;padding:1rem;box-shadow:0 1px 3px rgba(0,0,0,0.05);display:flex;align-items:center;gap:1rem;transition:all 0.2s;cursor:pointer}
+.job-card:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.job-match{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#fff;flex-shrink:0}
+.job-match.high{background:linear-gradient(135deg,#48bb78,#38a169)}
+.job-match.medium{background:linear-gradient(135deg,#ed8936,#dd6b20)}
+.job-info{flex:1}
+.job-title{font-size:0.9rem;font-weight:600;color:#2d3748}
+.job-company{font-size:0.75rem;color:#718096}
+.job-tags{display:flex;gap:0.4rem;margin-top:0.25rem}
+.job-tag{padding:0.1rem 0.35rem;background:#f7fafc;border-radius:3px;font-size:0.6rem;color:#4a5568}
+.job-salary{font-size:0.85rem;font-weight:700;color:#1a365d;white-space:nowrap}
+@media (max-width:1024px){
+.sidebar{transform:translateX(-100%);transition:transform 0.3s}
+.sidebar.open{transform:translateX(0)}
+.main-content{margin-left:0}
+.menu-toggle{display:block}
+.project-grid{grid-template-columns:1fr}
+.mentor-card{flex-direction:column;text-align:center}
+.mentor-action{align-items:center;margin-top:0.5rem}
+}
+</style>
+</head>
+<body>
+<div class="app-container">
+<div id="sidebar"></div>
+<div class="main-content">
+<div class="top-bar">
+<div style="display:flex;align-items:center;gap:1rem">
+<button class="menu-toggle" id="menu-toggle">☰</button>
+<div class="page-title">🏢 企业对接</div>
+</div>
+</div>
+
+<div class="section-title">📂 企业项目库</div>
+<div class="project-grid" id="projectGrid"></div>
+
+<div class="section-title">👨‍💼 企业导师</div>
+<div class="mentor-list" id="mentorList"></div>
+
+<div class="section-title">💼 岗位推荐</div>
+<div class="job-list" id="jobList"></div>
+</div>
+</div>
+
+<script src="gc-data.js"></script>
+<script>
+initPage('career');
+const user = Auth.getCurrentUser();
+
+function renderProjects() {
+  let html = '';
+  PROJECTS.forEach(p => {
+    const statusClass = p.status === '即将截止' ? 'status-closing' : 'status-open';
+    html += `
+      <div class="project-card" onclick="alert('项目详情页开发中：${p.title}')">
+        <div class="project-header">
+          <span class="project-company">${p.company}</span>
+          <span class="project-status ${statusClass}">${p.status}</span>
+        </div>
+        <div class="project-title">${p.title}</div>
+        <div class="project-desc">需求：${p.requirements}</div>
+        <div class="project-meta">
+          <span>🏆 ${p.credits}学分</span>
+          <span>📅 ${p.deadline}</span>
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">${p.type}</span>
+          <span class="project-tag">${p.requirements.split('、')[0]}</span>
+        </div>
+        <div class="project-footer">
+          <span class="project-deadline">截止：${p.deadline}</span>
+          <button class="btn-sm btn-primary-sm" style="padding:0.4rem 0.875rem;background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;border:none;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer" onclick="event.stopPropagation();alert('申请成功：${p.title}')">申请项目</button>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('projectGrid').innerHTML = html;
+}
+
+function renderMentors() {
+  let html = '';
+  MENTORS.forEach(m => {
+    html += `
+      <div class="mentor-card">
+        <div class="mentor-avatar">${m.name.charAt(0)}</div>
+        <div class="mentor-info">
+          <div class="mentor-name">${m.name}</div>
+          <div class="mentor-title">${m.title}</div>
+          <div class="mentor-company">${m.company}</div>
+          <div class="mentor-tags">
+            ${m.expertise.map(e => `<span class="mentor-tag">${e}</span>`).join('')}
+          </div>
+          <div class="mentor-available">🟢 可预约时间：${m.available}</div>
+        </div>
+        <div class="mentor-action">
+          <button class="btn-sm btn-primary-sm" style="padding:0.4rem 0.875rem;background:linear-gradient(135deg,#1a365d,#2c5282);color:#fff;border:none;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer" onclick="alert('预约请求已发送给 ${m.name}')">预约导师</button>
+          <button class="btn-sm btn-outline-sm" style="padding:0.4rem 0.875rem;background:#fff;color:#3182ce;border:1px solid #3182ce;border-radius:6px;font-size:0.8rem;font-weight:600;cursor:pointer" onclick="alert('查看 ${m.name} 的详细资料')">查看资料</button>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('mentorList').innerHTML = html;
+}
+
+function renderJobs() {
+  let html = '';
+  JOBS.forEach(j => {
+    const matchClass = j.match >= 90 ? 'high' : 'medium';
+    html += `
+      <div class="job-card" onclick="alert('岗位详情页开发中：${j.title}')">
+        <div class="job-match ${matchClass}">${j.match}%</div>
+        <div class="job-info">
+          <div class="job-title">${j.title}</div>
+          <div class="job-company">${j.company} · ${j.location} · ${j.type}</div>
+          <div class="job-tags">
+            ${j.tags.map(t => `<span class="job-tag">${t}</span>`).join('')}
+          </div>
+        </div>
+        <div class="job-salary">${j.salary}</div>
+      </div>
+    `;
+  });
+  document.getElementById('jobList').innerHTML = html;
+}
+
+renderProjects();
+renderMentors();
+renderJobs();
+</script>
+</body>
+</html>
