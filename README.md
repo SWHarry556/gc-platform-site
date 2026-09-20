@@ -1,1 +1,0 @@
-# gc-platform-site
